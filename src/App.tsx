@@ -1,34 +1,39 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { useEffect, useState } from "react";
+import { format, addMonths } from "date-fns";
 import "./App.css";
+import Day from "./components/Day";
+import getDays from "./utils/getDays";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [currentDateState, setCurrentDateState] = useState<Date>(new Date());
+
+  const [days, setDays] = useState<Date[]>([]);
+
+  const goToPreviousMonth = () => {
+    setCurrentDateState((prevDate) => addMonths(prevDate, -1));
+  };
+
+  const goToNextMonth = () => {
+    setCurrentDateState((prevDate) => addMonths(prevDate, 1));
+  };
+
+  useEffect(() => {
+    setDays(getDays(currentDateState));
+  }, [currentDateState]);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="layout">
+      <div className="header">
+        <button onClick={goToPreviousMonth}>&#8249;</button>
+        <div>{format(currentDateState, "yyyy 年 M 月")}</div>
+        <button onClick={goToNextMonth}>&#8250;</button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <div className="calendar">
+        {days.map((day) => (
+          <Day key={day.toString()} date={day} currentDate={currentDateState} />
+        ))}
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   );
 }
 
