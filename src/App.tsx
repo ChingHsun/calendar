@@ -2,10 +2,30 @@ import { format } from "date-fns";
 import "./App.css";
 import Day from "./components/Day";
 import getDays from "./utils/getDays";
+import { useState } from "react";
+
+export interface DateRange {
+  start: Date;
+  end: Date;
+}
 
 function App() {
   const currentDate = new Date();
   const days = getDays(currentDate);
+
+  const [dateRange, setDateRange] = useState<DateRange | null>(null);
+
+  const handleDayClick = (date: Date) => {
+    if (!dateRange) {
+      setDateRange({ start: date, end: date });
+    } else {
+      if (date < dateRange.start) {
+        setDateRange((prev) => prev && { ...prev, start: date });
+      } else {
+        setDateRange((prev) => prev && { ...prev, end: date });
+      }
+    }
+  };
 
   return (
     <div className="layout">
@@ -16,7 +36,13 @@ function App() {
       </div>
       <div className="calendar">
         {days.map((day) => (
-          <Day key={day.toString()} date={day} currentDate={currentDate} />
+          <Day
+            key={day.toString()}
+            date={day}
+            currentDate={currentDate}
+            onDayClick={handleDayClick}
+            dateRange={dateRange}
+          />
         ))}
       </div>
     </div>

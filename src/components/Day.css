@@ -7,7 +7,7 @@
   background-color: #e6e6e6;
 }
 
-.day:active {
+.day.active {
   color: white;
   background-color: #006edc;
 }
